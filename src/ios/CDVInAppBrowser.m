@@ -659,11 +659,11 @@ self.shareButton.width = 38.000;
 
     // Filter out Navigation Buttons if user requests so
     if (_browserOptions.hidenavigationbuttons) {
-      [self.toolbar setItems:@[self.closeButton, flexibleSpaceButton]];
+      [self.toolbar setItems:@[self.closeButton, flexibleSpaceButton, self.shareButton]];
     } else {
-      [self.toolbar setItems:@[self.closeButton, flexibleSpaceButton, self.backButton, fixedSpaceButton, self.forwardButton]];
+      [self.toolbar setItems:@[self.closeButton, flexibleSpaceButton, self.backButton, fixedSpaceButton, self.forwardButton, self.shareButton]];
     }
-    [self.toolbar setItems:@[self.closeButton, flexibleSpaceButton]];
+    [self.toolbar setItems:@[self.closeButton, flexibleSpaceButton, self.shareButton]];
 
     self.view.backgroundColor = [UIColor grayColor];
     [self.view addSubview:self.toolbar];
