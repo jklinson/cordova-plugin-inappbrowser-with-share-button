@@ -576,6 +576,15 @@
     self.spinner.userInteractionEnabled = NO;
     [self.spinner stopAnimating];
 
+
+self.shareButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSave target:self action:@selector(wnShare)];
+self.shareButton.enabled = YES;
+self.shareButton.imageInsets = UIEdgeInsetsZero;
+self.shareButton.style = UIBarButtonItemStylePlain;
+self.shareButton.width = 38.000;
+
+
+
     self.closeButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(close)];
     self.closeButton.enabled = YES;
 
