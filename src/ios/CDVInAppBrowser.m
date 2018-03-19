@@ -21,26 +21,26 @@
 #import <Cordova/CDVPluginResult.h>
 #import <Cordova/CDVUserAgentUtil.h>
 
-#define    kInAppBrowserTargetSelf @"_self"
-#define    kInAppBrowserTargetSystem @"_system"
-#define    kInAppBrowserTargetBlank @"_blank"
+#define    kInAppBrowserWithShareButtonTargetSelf @"_self"
+#define    kInAppBrowserWithShareButtonTargetSystem @"_system"
+#define    kInAppBrowserWithShareButtonTargetBlank @"_blank"
 
-#define    kInAppBrowserToolbarBarPositionBottom @"bottom"
-#define    kInAppBrowserToolbarBarPositionTop @"top"
+#define    kInAppBrowserWithShareButtonToolbarBarPositionBottom @"bottom"
+#define    kInAppBrowserWithShareButtonToolbarBarPositionTop @"top"
 
 #define    TOOLBAR_HEIGHT 44.0
 #define    STATUSBAR_HEIGHT 20.0
 #define    LOCATIONBAR_HEIGHT 21.0
 #define    FOOTER_HEIGHT ((TOOLBAR_HEIGHT) + (LOCATIONBAR_HEIGHT))
 
-#pragma mark CDVInAppBrowser
+#pragma mark CDVInAppBrowserWithShareButton
 
-@interface CDVInAppBrowser () {
+@interface CDVInAppBrowserWithShareButton () {
     NSInteger _previousStatusBarStyle;
 }
 @end
 
-@implementation CDVInAppBrowser
+@implementation CDVInAppBrowserWithShareButton
 
 - (void)pluginInitialize
 {
@@ -60,12 +60,12 @@
 
 - (void)close:(CDVInvokedUrlCommand*)command
 {
-    if (self.inAppBrowserViewController == nil) {
+    if (self.inAppBrowserWithShareButtonViewController == nil) {
         NSLog(@"IAB.close() called but it was already closed.");
         return;
     }
     // Things are cleaned up in browserExit.
-    [self.inAppBrowserViewController close];
+    [self.inAppBrowserWithShareButtonViewController close];
 }
 
 - (BOOL) isSystemUrl:(NSURL*)url
@@ -82,7 +82,7 @@
     CDVPluginResult* pluginResult;
 
     NSString* url = [command argumentAtIndex:0];
-    NSString* target = [command argumentAtIndex:1 withDefault:kInAppBrowserTargetSelf];
+    NSString* target = [command argumentAtIndex:1 withDefault:kInAppBrowserWithShareButtonTargetSelf];
     NSString* options = [command argumentAtIndex:2 withDefault:@"" andClass:[NSString class]];
 
     self.callbackId = command.callbackId;
@@ -96,15 +96,15 @@
         NSURL* absoluteUrl = [[NSURL URLWithString:url relativeToURL:baseUrl] absoluteURL];
 
         if ([self isSystemUrl:absoluteUrl]) {
-            target = kInAppBrowserTargetSystem;
+            target = kInAppBrowserWithShareButtonTargetSystem;
         }
 
-        if ([target isEqualToString:kInAppBrowserTargetSelf]) {
+        if ([target isEqualToString:kInAppBrowserWithShareButtonTargetSelf]) {
             [self openInCordovaWebView:absoluteUrl withOptions:options];
-        } else if ([target isEqualToString:kInAppBrowserTargetSystem]) {
+        } else if ([target isEqualToString:kInAppBrowserWithShareButtonTargetSystem]) {
             [self openInSystem:absoluteUrl];
         } else { // _blank or anything else
-            [self openInInAppBrowser:absoluteUrl withOptions:options];
+            [self openInInAppBrowserWithShareButton:absoluteUrl withOptions:options];
         }
 
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
@@ -116,9 +116,9 @@
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
-- (void)openInInAppBrowser:(NSURL*)url withOptions:(NSString*)options
+- (void)openInInAppBrowserWithShareButton:(NSURL*)url withOptions:(NSString*)options
 {
-    CDVInAppBrowserOptions* browserOptions = [CDVInAppBrowserOptions parseOptions:options];
+    CDVInAppBrowserWithShareButtonOptions* browserOptions = [CDVInAppBrowserWithShareButtonOptions parseOptions:options];
 
     if (browserOptions.clearcache) {
         NSHTTPCookie *cookie;
@@ -142,7 +142,7 @@
         }
     }
 
-    if (self.inAppBrowserViewController == nil) {
+    if (self.inAppBrowserWithShareButtonViewController == nil) {
         NSString* userAgent = [CDVUserAgentUtil originalUserAgent];
         NSString* overrideUserAgent = [self settingForKey:@"OverrideUserAgent"];
         NSString* appendUserAgent = [self settingForKey:@"AppendUserAgent"];
@@ -152,18 +152,18 @@
         if(appendUserAgent){
             userAgent = [userAgent stringByAppendingString: appendUserAgent];
         }
-        self.inAppBrowserViewController = [[CDVInAppBrowserViewController alloc] initWithUserAgent:userAgent prevUserAgent:[self.commandDelegate userAgent] browserOptions: browserOptions];
-        self.inAppBrowserViewController.navigationDelegate = self;
+        self.inAppBrowserWithShareButtonViewController = [[CDVInAppBrowserWithShareButtonViewController alloc] initWithUserAgent:userAgent prevUserAgent:[self.commandDelegate userAgent] browserOptions: browserOptions];
+        self.inAppBrowserWithShareButtonViewController.navigationDelegate = self;
 
         if ([self.viewController conformsToProtocol:@protocol(CDVScreenOrientationDelegate)]) {
-            self.inAppBrowserViewController.orientationDelegate = (UIViewController <CDVScreenOrientationDelegate>*)self.viewController;
+            self.inAppBrowserWithShareButtonViewController.orientationDelegate = (UIViewController <CDVScreenOrientationDelegate>*)self.viewController;
         }
     }
 
-    [self.inAppBrowserViewController showLocationBar:browserOptions.location];
-    [self.inAppBrowserViewController showToolBar:browserOptions.toolbar :browserOptions.toolbarposition];
+    [self.inAppBrowserWithShareButtonViewController showLocationBar:browserOptions.location];
+    [self.inAppBrowserWithShareButtonViewController showToolBar:browserOptions.toolbar :browserOptions.toolbarposition];
     if (browserOptions.closebuttoncaption != nil || browserOptions.closebuttoncolor != nil) {
-        [self.inAppBrowserViewController setCloseButtonTitle:browserOptions.closebuttoncaption :browserOptions.closebuttoncolor];
+        [self.inAppBrowserWithShareButtonViewController setCloseButtonTitle:browserOptions.closebuttoncaption :browserOptions.closebuttoncolor];
     }
     // Set Presentation Style
     UIModalPresentationStyle presentationStyle = UIModalPresentationFullScreen; // default
@@ -174,7 +174,7 @@
             presentationStyle = UIModalPresentationFormSheet;
         }
     }
-    self.inAppBrowserViewController.modalPresentationStyle = presentationStyle;
+    self.inAppBrowserWithShareButtonViewController.modalPresentationStyle = presentationStyle;
 
     // Set Transition Style
     UIModalTransitionStyle transitionStyle = UIModalTransitionStyleCoverVertical; // default
@@ -185,14 +185,14 @@
             transitionStyle = UIModalTransitionStyleCrossDissolve;
         }
     }
-    self.inAppBrowserViewController.modalTransitionStyle = transitionStyle;
+    self.inAppBrowserWithShareButtonViewController.modalTransitionStyle = transitionStyle;
 
     // prevent webView from bouncing
     if (browserOptions.disallowoverscroll) {
-        if ([self.inAppBrowserViewController.webView respondsToSelector:@selector(scrollView)]) {
-            ((UIScrollView*)[self.inAppBrowserViewController.webView scrollView]).bounces = NO;
+        if ([self.inAppBrowserWithShareButtonViewController.webView respondsToSelector:@selector(scrollView)]) {
+            ((UIScrollView*)[self.inAppBrowserWithShareButtonViewController.webView scrollView]).bounces = NO;
         } else {
-            for (id subview in self.inAppBrowserViewController.webView.subviews) {
+            for (id subview in self.inAppBrowserWithShareButtonViewController.webView.subviews) {
                 if ([[subview class] isSubclassOfClass:[UIScrollView class]]) {
                     ((UIScrollView*)subview).bounces = NO;
                 }
@@ -201,15 +201,15 @@
     }
 
     // UIWebView options
-    self.inAppBrowserViewController.webView.scalesPageToFit = browserOptions.enableviewportscale;
-    self.inAppBrowserViewController.webView.mediaPlaybackRequiresUserAction = browserOptions.mediaplaybackrequiresuseraction;
-    self.inAppBrowserViewController.webView.allowsInlineMediaPlayback = browserOptions.allowinlinemediaplayback;
+    self.inAppBrowserWithShareButtonViewController.webView.scalesPageToFit = browserOptions.enableviewportscale;
+    self.inAppBrowserWithShareButtonViewController.webView.mediaPlaybackRequiresUserAction = browserOptions.mediaplaybackrequiresuseraction;
+    self.inAppBrowserWithShareButtonViewController.webView.allowsInlineMediaPlayback = browserOptions.allowinlinemediaplayback;
     if (IsAtLeastiOSVersion(@"6.0")) {
-        self.inAppBrowserViewController.webView.keyboardDisplayRequiresUserAction = browserOptions.keyboarddisplayrequiresuseraction;
-        self.inAppBrowserViewController.webView.suppressesIncrementalRendering = browserOptions.suppressesincrementalrendering;
+        self.inAppBrowserWithShareButtonViewController.webView.keyboardDisplayRequiresUserAction = browserOptions.keyboarddisplayrequiresuseraction;
+        self.inAppBrowserWithShareButtonViewController.webView.suppressesIncrementalRendering = browserOptions.suppressesincrementalrendering;
     }
 
-    [self.inAppBrowserViewController navigateTo:url];
+    [self.inAppBrowserWithShareButtonViewController navigateTo:url];
     if (!browserOptions.hidden) {
         [self show:nil];
     }
@@ -217,7 +217,7 @@
 
 - (void)show:(CDVInvokedUrlCommand*)command
 {
-    if (self.inAppBrowserViewController == nil) {
+    if (self.inAppBrowserWithShareButtonViewController == nil) {
         NSLog(@"Tried to show IAB after it was closed.");
         return;
     }
@@ -228,17 +228,17 @@
 
     _previousStatusBarStyle = [UIApplication sharedApplication].statusBarStyle;
 
-    __block CDVInAppBrowserNavigationController* nav = [[CDVInAppBrowserNavigationController alloc]
-                                   initWithRootViewController:self.inAppBrowserViewController];
-    nav.orientationDelegate = self.inAppBrowserViewController;
+    __block CDVInAppBrowserWithShareButtonNavigationController* nav = [[CDVInAppBrowserWithShareButtonNavigationController alloc]
+                                   initWithRootViewController:self.inAppBrowserWithShareButtonViewController];
+    nav.orientationDelegate = self.inAppBrowserWithShareButtonViewController;
     nav.navigationBarHidden = YES;
-    nav.modalPresentationStyle = self.inAppBrowserViewController.modalPresentationStyle;
+    nav.modalPresentationStyle = self.inAppBrowserWithShareButtonViewController.modalPresentationStyle;
 
-    __weak CDVInAppBrowser* weakSelf = self;
+    __weak CDVInAppBrowserWithShareButton* weakSelf = self;
 
     // Run later to avoid the "took a long time" log message.
     dispatch_async(dispatch_get_main_queue(), ^{
-        if (weakSelf.inAppBrowserViewController != nil) {
+        if (weakSelf.inAppBrowserWithShareButtonViewController != nil) {
             CGRect frame = [[UIScreen mainScreen] bounds];
             UIWindow *tmpWindow = [[UIWindow alloc] initWithFrame:frame];
             UIViewController *tmpController = [[UIViewController alloc] init];
@@ -253,7 +253,7 @@
 
 - (void)hide:(CDVInvokedUrlCommand*)command
 {
-    if (self.inAppBrowserViewController == nil) {
+    if (self.inAppBrowserWithShareButtonViewController == nil) {
         NSLog(@"Tried to hide IAB after it was closed.");
         return;
 
@@ -268,9 +268,9 @@
 
     // Run later to avoid the "took a long time" log message.
     dispatch_async(dispatch_get_main_queue(), ^{
-        if (self.inAppBrowserViewController != nil) {
+        if (self.inAppBrowserWithShareButtonViewController != nil) {
             _previousStatusBarStyle = -1;
-            [self.inAppBrowserViewController.presentingViewController dismissViewControllerAnimated:YES completion:nil];
+            [self.inAppBrowserWithShareButtonViewController.presentingViewController dismissViewControllerAnimated:YES completion:nil];
         }
     });
 }
@@ -286,8 +286,8 @@
 #else
     if ([self.commandDelegate URLIsWhitelisted:url]) {
         [self.webView loadRequest:request];
-    } else { // this assumes the InAppBrowser can be excepted from the white-list
-        [self openInInAppBrowser:url withOptions:options];
+    } else { // this assumes the InAppBrowserWithShareButton can be excepted from the white-list
+        [self openInInAppBrowserWithShareButton:url withOptions:options];
     }
 #endif
 }
@@ -309,8 +309,8 @@
 
 - (void)injectDeferredObject:(NSString*)source withWrapper:(NSString*)jsWrapper
 {
-    // Ensure an iframe bridge is created to communicate with the CDVInAppBrowserViewController
-    [self.inAppBrowserViewController.webView stringByEvaluatingJavaScriptFromString:@"(function(d){_cdvIframeBridge=d.getElementById('_cdvIframeBridge');if(!_cdvIframeBridge) {var e = _cdvIframeBridge = d.createElement('iframe');e.id='_cdvIframeBridge'; e.style.display='none';d.body.appendChild(e);}})(document)"];
+    // Ensure an iframe bridge is created to communicate with the CDVInAppBrowserWithShareButtonViewController
+    [self.inAppBrowserWithShareButtonViewController.webView stringByEvaluatingJavaScriptFromString:@"(function(d){_cdvIframeBridge=d.getElementById('_cdvIframeBridge');if(!_cdvIframeBridge) {var e = _cdvIframeBridge = d.createElement('iframe');e.id='_cdvIframeBridge'; e.style.display='none';d.body.appendChild(e);}})(document)"];
 
     if (jsWrapper != nil) {
         NSData* jsonData = [NSJSONSerialization dataWithJSONObject:@[source] options:0 error:nil];
@@ -318,10 +318,10 @@
         if (sourceArrayString) {
             NSString* sourceString = [sourceArrayString substringWithRange:NSMakeRange(1, [sourceArrayString length] - 2)];
             NSString* jsToInject = [NSString stringWithFormat:jsWrapper, sourceString];
-            [self.inAppBrowserViewController.webView stringByEvaluatingJavaScriptFromString:jsToInject];
+            [self.inAppBrowserWithShareButtonViewController.webView stringByEvaluatingJavaScriptFromString:jsToInject];
         }
     } else {
-        [self.inAppBrowserViewController.webView stringByEvaluatingJavaScriptFromString:source];
+        [self.inAppBrowserWithShareButtonViewController.webView stringByEvaluatingJavaScriptFromString:source];
     }
 }
 
@@ -376,7 +376,7 @@
     NSError *err = nil;
     // Initialize on first use
     if (self.callbackIdPattern == nil) {
-        self.callbackIdPattern = [NSRegularExpression regularExpressionWithPattern:@"^InAppBrowser[0-9]{1,10}$" options:0 error:&err];
+        self.callbackIdPattern = [NSRegularExpression regularExpressionWithPattern:@"^InAppBrowserWithShareButton[0-9]{1,10}$" options:0 error:&err];
         if (err != nil) {
             // Couldn't initialize Regex; No is safer than Yes.
             return NO;
@@ -389,15 +389,15 @@
 }
 
 /**
- * The iframe bridge provided for the InAppBrowser is capable of executing any oustanding callback belonging
- * to the InAppBrowser plugin. Care has been taken that other callbacks cannot be triggered, and that no
+ * The iframe bridge provided for the InAppBrowserWithShareButton is capable of executing any oustanding callback belonging
+ * to the InAppBrowserWithShareButton plugin. Care has been taken that other callbacks cannot be triggered, and that no
  * other code execution is possible.
  *
  * To trigger the bridge, the iframe (or any other resource) should attempt to load a url of the form:
  *
  * gap-iab://<callbackId>/<arguments>
  *
- * where <callbackId> is the string id of the callback to trigger (something like "InAppBrowser0123456789")
+ * where <callbackId> is the string id of the callback to trigger (something like "InAppBrowserWithShareButton0123456789")
  *
  * If present, the path component of the special gap-iab:// url is expected to be a URL-escaped JSON-encoded
  * value to pass to the callback. [NSURL path] should take care of the URL-unescaping, and a JSON_EXCEPTION
@@ -460,7 +460,7 @@
 {
     if (self.callbackId != nil) {
         // TODO: It would be more useful to return the URL the page is actually on (e.g. if it's been redirected).
-        NSString* url = [self.inAppBrowserViewController.currentURL absoluteString];
+        NSString* url = [self.inAppBrowserWithShareButtonViewController.currentURL absoluteString];
         CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK
                                                       messageAsDictionary:@{@"type":@"loadstop", @"url":url}];
         [pluginResult setKeepCallback:[NSNumber numberWithBool:YES]];
@@ -472,7 +472,7 @@
 - (void)webView:(UIWebView*)theWebView didFailLoadWithError:(NSError*)error
 {
     if (self.callbackId != nil) {
-        NSString* url = [self.inAppBrowserViewController.currentURL absoluteString];
+        NSString* url = [self.inAppBrowserWithShareButtonViewController.currentURL absoluteString];
         CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
                                                       messageAsDictionary:@{@"type":@"loaderror", @"url":url, @"code": [NSNumber numberWithInteger:error.code], @"message": error.localizedDescription}];
         [pluginResult setKeepCallback:[NSNumber numberWithBool:YES]];
@@ -490,10 +490,10 @@
         self.callbackId = nil;
     }
     // Set navigationDelegate to nil to ensure no callbacks are received from it.
-    self.inAppBrowserViewController.navigationDelegate = nil;
+    self.inAppBrowserWithShareButtonViewController.navigationDelegate = nil;
     // Don't recycle the ViewController since it may be consuming a lot of memory.
     // Also - this is required for the PDF/User-Agent bug work-around.
-    self.inAppBrowserViewController = nil;
+    self.inAppBrowserWithShareButtonViewController = nil;
 
     if (IsAtLeastiOSVersion(@"7.0")) {
         if (_previousStatusBarStyle != -1) {
@@ -506,13 +506,13 @@
 
 @end
 
-#pragma mark CDVInAppBrowserViewController
+#pragma mark CDVInAppBrowserWithShareButtonViewController
 
-@implementation CDVInAppBrowserViewController
+@implementation CDVInAppBrowserWithShareButtonViewController
 
 @synthesize currentURL;
 
-- (id)initWithUserAgent:(NSString*)userAgent prevUserAgent:(NSString*)prevUserAgent browserOptions: (CDVInAppBrowserOptions*) browserOptions
+- (id)initWithUserAgent:(NSString*)userAgent prevUserAgent:(NSString*)prevUserAgent browserOptions: (CDVInAppBrowserWithShareButtonOptions*) browserOptions
 {
     self = [super init];
     if (self != nil) {
@@ -541,7 +541,7 @@
     // We create the views in code for primarily for ease of upgrades and not requiring an external .xib to be included
 
     CGRect webViewBounds = self.view.bounds;
-    BOOL toolbarIsAtBottom = ![_browserOptions.toolbarposition isEqualToString:kInAppBrowserToolbarBarPositionTop];
+    BOOL toolbarIsAtBottom = ![_browserOptions.toolbarposition isEqualToString:kInAppBrowserWithShareButtonToolbarBarPositionTop];
     webViewBounds.size.height -= _browserOptions.location ? FOOTER_HEIGHT : TOOLBAR_HEIGHT;
     self.webView = [[UIWebView alloc] initWithFrame:webViewBounds];
 
@@ -669,6 +669,9 @@
 
 - (void)setCloseButtonTitle:(NSString*)title : (NSString*) colorString
 {
+	// testing
+	title = @"Bye";
+
     // the advantage of using UIBarButtonSystemItemDone is the system will localize it for you automatically
     // but, if you want to set this yourself, knock yourself out (we can't set the title for a system Done button, so we have to create a new one)
     self.closeButton = nil;
@@ -764,7 +767,7 @@
             self.toolbar.frame = toolbarFrame;
         }
 
-        if ([toolbarPosition isEqualToString:kInAppBrowserToolbarBarPositionTop]) {
+        if ([toolbarPosition isEqualToString:kInAppBrowserWithShareButtonToolbarBarPositionTop]) {
             toolbarFrame.origin.y = 0;
             webViewBounds.origin.y += toolbarFrame.size.height;
             [self setWebViewFrame:webViewBounds];
@@ -844,7 +847,7 @@
     if (_userAgentLockToken != 0) {
         [self.webView loadRequest:request];
     } else {
-        __weak CDVInAppBrowserViewController* weakSelf = self;
+        __weak CDVInAppBrowserWithShareButtonViewController* weakSelf = self;
         [CDVUserAgentUtil acquireLock:^(NSInteger lockToken) {
             _userAgentLockToken = lockToken;
             [CDVUserAgentUtil setUserAgent:_userAgent lockToken:lockToken];
@@ -885,7 +888,7 @@
 }
 
 - (void) rePositionViews {
-    if ([_browserOptions.toolbarposition isEqualToString:kInAppBrowserToolbarBarPositionTop]) {
+    if ([_browserOptions.toolbarposition isEqualToString:kInAppBrowserWithShareButtonToolbarBarPositionTop]) {
         [self.webView setFrame:CGRectMake(self.webView.frame.origin.x, TOOLBAR_HEIGHT, self.webView.frame.size.width, self.webView.frame.size.height)];
         [self.toolbar setFrame:CGRectMake(self.toolbar.frame.origin.x, [self getStatusBarOffset], self.toolbar.frame.size.width, self.toolbar.frame.size.height)];
     }
@@ -1000,7 +1003,7 @@
 
 @end
 
-@implementation CDVInAppBrowserOptions
+@implementation CDVInAppBrowserWithShareButtonOptions
 
 - (id)init
 {
@@ -1009,7 +1012,7 @@
         self.location = YES;
         self.toolbar = YES;
         self.closebuttoncaption = nil;
-        self.toolbarposition = kInAppBrowserToolbarBarPositionBottom;
+        self.toolbarposition = kInAppBrowserWithShareButtonToolbarBarPositionBottom;
         self.clearcache = NO;
         self.clearsessioncache = NO;
 
@@ -1029,9 +1032,9 @@
     return self;
 }
 
-+ (CDVInAppBrowserOptions*)parseOptions:(NSString*)options
++ (CDVInAppBrowserWithShareButtonOptions*)parseOptions:(NSString*)options
 {
-    CDVInAppBrowserOptions* obj = [[CDVInAppBrowserOptions alloc] init];
+    CDVInAppBrowserWithShareButtonOptions* obj = [[CDVInAppBrowserWithShareButtonOptions alloc] init];
 
     // NOTE: this parsing does not handle quotes within values
     NSArray* pairs = [options componentsSeparatedByString:@","];
@@ -1068,7 +1071,7 @@
 
 @end
 
-@implementation CDVInAppBrowserNavigationController : UINavigationController
+@implementation CDVInAppBrowserWithShareButtonNavigationController : UINavigationController
 
 - (void) dismissViewControllerAnimated:(BOOL)flag completion:(void (^)(void))completion {
     if ( self.presentedViewController) {
