@@ -865,10 +865,7 @@ self.shareButton.width = 38.000;
 - (void)wnShare
 {
 	/* Whatever you want to do when the button is tapped goes here */
-	NSString* event = @"share";
-	
-	NSMutableDictionary* dict = [NSMutableDictionary new];
-	[dict setObject:event forKey:@"type"];
+	NSMutableDictionary* dict = @{@"type":@"exit"};
 
 	[self.navigationDelegate emitEvent:dict];
 }
