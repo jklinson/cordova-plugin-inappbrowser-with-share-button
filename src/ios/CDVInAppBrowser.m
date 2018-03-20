@@ -504,6 +504,17 @@
     _previousStatusBarStyle = -1; // this value was reset before reapplying it. caused statusbar to stay black on ios7
 }
 
+- (void)emitEvent:(NSDictionary*)event
+{
+    if (self.callbackId != nil) {
+        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK
+                                                      messageAsDictionary:event];
+        [pluginResult setKeepCallback:[NSNumber numberWithBool:YES]];
+
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:self.callbackId];
+    }
+}
+
 @end
 
 #pragma mark CDVInAppBrowserWithShareButtonViewController
@@ -853,17 +864,13 @@ self.shareButton.width = 38.000;
 
 - (void)wnShare
 {
-    /* Whatever you want to do when the button is tapped goes here */
-    
-    if (self.callbackId != nil) {
-        // TODO: It would be more useful to return the URL the page is actually on (e.g. if it's been redirected).
-        NSString* url = [self.inAppBrowserWithShareButtonViewController.currentURL absoluteString];
-        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK
-                                                      messageAsDictionary:@{@"type":@"share", @"url":url}];
-        [pluginResult setKeepCallback:[NSNumber numberWithBool:YES]];
+	/* Whatever you want to do when the button is tapped goes here */
+	NSString* event = @"share";
+	
+	NSMutableDictionary* dict = [NSMutableDictionary new];
+	[dict setObject:event forKey:@"type"];
 
-        [self.commandDelegate sendPluginResult:pluginResult callbackId:self.callbackId];
-    }
+	[self.navigationDelegate emitEvent:dict];
 }
 
 
