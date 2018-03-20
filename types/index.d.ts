@@ -54,6 +54,7 @@ interface InAppBrowserWithShareButton extends Window {
     onloadstop: (type: InAppBrowserWithShareButtonEvent) => void;
     onloaderror: (type: InAppBrowserWithShareButtonEvent) => void;
     onexit: (type: InAppBrowserWithShareButtonEvent) => void;
+    onshare: (type: InAppBrowserWithShareButtonEvent) => void;
     // addEventListener overloads
     /**
      * Adds a listener for an event from the InAppBrowserWithShareButton.
