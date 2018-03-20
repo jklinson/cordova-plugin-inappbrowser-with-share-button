@@ -589,7 +589,7 @@
 
 
 
-self.shareButton = [[UIBarButtonItem alloc] initWithTitle:@("Share") style:UIBarButtonItemStyleBordered target:self action:@selector(wnShare)];
+self.shareButton = [[UIBarButtonItem alloc] initWithTitle:@("Share") style:UIBarButtonItemStyleBordered target:self action:@selector(wnShare:)];
 self.shareButton.enabled = YES;
 self.shareButton.imageInsets = UIEdgeInsetsZero;
 self.shareButton.style = UIBarButtonItemStylePlain;
@@ -862,12 +862,9 @@ self.shareButton.width = 38.000;
 }
 
 
-- (void)wnShare
+- (void)wnShare:(id)sender
 {
-	/* Whatever you want to do when the button is tapped goes here */
-	NSMutableDictionary* dict = @{@"type":@"exit"};
-
-	[self.navigationDelegate emitEvent:dict];
+	[self.navigationDelegate emitEvent:@{@"type":@"exit"}];
 }
 
 
