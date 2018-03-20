@@ -106,6 +106,18 @@ interface InAppBrowserWithShareButton extends Window {
      *                  loadstop: event fires when the InAppBrowserWithShareButton finishes loading a URL.
      *                  loaderror: event fires when the InAppBrowserWithShareButton encounters an error when loading a URL.
      *                  exit: event fires when the InAppBrowserWithShareButton window is closed.
+     *					share: vent fires when the share button is clicked.
+     * @param callback  the function that executes when the event fires. The function is
+     *                  passed an InAppBrowserWithShareButtonEvent object as a parameter.
+     */
+    addEventListener(type: "share", callback: (event: InAppBrowserWithShareButtonEvent) => void): void;
+    /**
+     * Adds a listener for an event from the InAppBrowserWithShareButton.
+     * @param type      the event to listen for
+     *                  loadstart: event fires when the InAppBrowserWithShareButton starts to load a URL.
+     *                  loadstop: event fires when the InAppBrowserWithShareButton finishes loading a URL.
+     *                  loaderror: event fires when the InAppBrowserWithShareButton encounters an error when loading a URL.
+     *                  exit: event fires when the InAppBrowserWithShareButton window is closed.
      * @param callback  the function that executes when the event fires. The function is
      *                  passed an Event object as a parameter.
      */
@@ -155,6 +167,18 @@ interface InAppBrowserWithShareButton extends Window {
      *                  passed an InAppBrowserWithShareButtonEvent object as a parameter.
      */
     removeEventListener(type: "exit", callback: (event: InAppBrowserWithShareButtonEvent) => void): void;
+    /**
+     * Removes a listener for an event from the InAppBrowserWithShareButton.
+     * @param type      The event to stop listening for.
+     *                  loadstart: event fires when the InAppBrowserWithShareButton starts to load a URL.
+     *                  loadstop: event fires when the InAppBrowserWithShareButton finishes loading a URL.
+     *                  loaderror: event fires when the InAppBrowserWithShareButton encounters an error when loading a URL.
+     *                  exit: event fires when the InAppBrowserWithShareButton window is closed.
+	 *				    share: vent fires when the share button is clicked.
+     * @param callback  the function that executes when the event fires. The function is
+     *                  passed an InAppBrowserWithShareButtonEvent object as a parameter.
+     */
+    removeEventListener(type: "share", callback: (event: InAppBrowserWithShareButtonEvent) => void): void;
     /**
      * Removes a listener for an event from the InAppBrowserWithShareButton.
      * @param type      The event to stop listening for.
