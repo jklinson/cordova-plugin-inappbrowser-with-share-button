@@ -864,7 +864,9 @@ self.shareButton.width = 38.000;
 
 - (void)wnShare:(id)sender
 {
-	[self.navigationDelegate emitEvent:@{@"type":@"exit"}];
+    if ((self.navigationDelegate != nil) && [self.navigationDelegate respondsToSelector:@selector(share:)]) {
+		[self.navigationDelegate emitEvent:@{@"type":@"share"}];
+    }
 }
 
 
