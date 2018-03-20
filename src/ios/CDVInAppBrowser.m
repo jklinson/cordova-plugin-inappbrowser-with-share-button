@@ -604,7 +604,7 @@
 
 
 
-self.shareButton = [[UIBarButtonItem alloc] initWithTitle:@("Share") style:UIBarButtonItemStyleBordered target:self action:@selector(close)];
+self.shareButton = [[UIBarButtonItem alloc] initWithTitle:@("Share") style:UIBarButtonItemStyleBordered target:self action:@selector(wnshare)];
 self.shareButton.enabled = YES;
 self.shareButton.imageInsets = UIEdgeInsetsZero;
 self.shareButton.style = UIBarButtonItemStylePlain;
@@ -877,9 +877,11 @@ self.shareButton.width = 38.000;
 }
 
 
-- (void)wnShare:(id)sender
+- (void)wnshare
 {
-    if ((self.navigationDelegate != nil) && [self.navigationDelegate respondsToSelector:@selector(share:)]) {
+    [CDVUserAgentUtil releaseLock:&_userAgentLockToken];
+    
+    if (self.navigationDelegate != nil) {
 		[self.navigationDelegate emitEvent:@{@"type":@"share"}];
     }
     
