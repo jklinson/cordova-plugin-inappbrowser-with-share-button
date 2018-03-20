@@ -604,7 +604,7 @@
 
 
 
-self.shareButton = [[UIBarButtonItem alloc] initWithTitle:@("Share") style:UIBarButtonItemStyleBordered target:self action:@selector(wnShare:)];
+self.shareButton = [[UIBarButtonItem alloc] initWithTitle:@("Share") style:UIBarButtonItemStyleBordered target:self action:@selector(close)];
 self.shareButton.enabled = YES;
 self.shareButton.imageInsets = UIEdgeInsetsZero;
 self.shareButton.style = UIBarButtonItemStylePlain;
