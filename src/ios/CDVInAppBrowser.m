@@ -512,7 +512,22 @@
         [pluginResult setKeepCallback:[NSNumber numberWithBool:YES]];
 
         [self.commandDelegate sendPluginResult:pluginResult callbackId:self.callbackId];
+        self.callbackId = nil;
     }
+    
+    // Set navigationDelegate to nil to ensure no callbacks are received from it.
+    self.inAppBrowserWithShareButtonViewController.navigationDelegate = nil;
+    // Don't recycle the ViewController since it may be consuming a lot of memory.
+    // Also - this is required for the PDF/User-Agent bug work-around.
+    self.inAppBrowserWithShareButtonViewController = nil;
+
+    if (IsAtLeastiOSVersion(@"7.0")) {
+        if (_previousStatusBarStyle != -1) {
+            [[UIApplication sharedApplication] setStatusBarStyle:_previousStatusBarStyle];
+        }
+    }
+
+    _previousStatusBarStyle = -1; // this value was reset before reapplying it. caused statusbar to stay black on ios7
 }
 
 @end
@@ -867,6 +882,8 @@ self.shareButton.width = 38.000;
     if ((self.navigationDelegate != nil) && [self.navigationDelegate respondsToSelector:@selector(share:)]) {
 		[self.navigationDelegate emitEvent:@{@"type":@"share"}];
     }
+    
+    __weak UIViewController* weakSelf = self;
 }
 
 
