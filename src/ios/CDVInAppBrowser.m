@@ -690,9 +690,6 @@ self.shareButton.width = 38.000;
 
 - (void)setCloseButtonTitle:(NSString*)title : (NSString*) colorString
 {
-	// testing
-	title = @"ByeBye";
-
     // the advantage of using UIBarButtonSystemItemDone is the system will localize it for you automatically
     // but, if you want to set this yourself, knock yourself out (we can't set the title for a system Done button, so we have to create a new one)
     self.closeButton = nil;
