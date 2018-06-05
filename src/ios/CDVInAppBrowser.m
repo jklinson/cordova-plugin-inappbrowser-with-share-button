@@ -589,8 +589,8 @@
 
 
 
-if (_browserOptions.shareButtonCaption != nil) {
-    self.shareButton = [[UIBarButtonItem alloc] initWithTitle:_browserOptions.shareButtonCaption style:UIBarButtonItemStyleBordered target:self action:@selector(wnshare)];
+if (_browserOptions.sharebuttoncaption != nil) {
+    self.shareButton = [[UIBarButtonItem alloc] initWithTitle:_browserOptions.sharebuttoncaption style:UIBarButtonItemStyleBordered target:self action:@selector(wnshare)];
 } else {
     self.shareButton = [[UIBarButtonItem alloc] initWithTitle:@("Share") style:UIBarButtonItemStyleBordered target:self action:@selector(wnshare)];
 }
