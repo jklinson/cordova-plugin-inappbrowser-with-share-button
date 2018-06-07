@@ -976,7 +976,7 @@ self.shareButton.width = 38.000;
     [self.spinner stopAnimating];
 
     // Prevent iOS Webkit Long Press on Link
-    [webView stringByEvaluatingJavaScriptFromString:@"document.body.style.webkitTouchCallout='none';"];
+    [theWebView stringByEvaluatingJavaScriptFromString:@"document.body.style.webkitTouchCallout='none';"];
     
     
     // Work around a bug where the first time a PDF is opened, all UIWebViews
